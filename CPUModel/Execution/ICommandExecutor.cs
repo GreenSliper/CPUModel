@@ -5,12 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Domain.Resources;
 
 namespace CPUModel.Execution
 {
 	public interface ICommandExecutor
 	{
-		void Execute(Command command);
+		void Execute(Command command, CPUResources resources);
 	}
 
 	public interface ICommandExecutorChain : ICommandExecutor

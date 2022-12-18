@@ -1,5 +1,6 @@
 ﻿using Domain.Execution;
 using Domain.Execution.Commands;
+using Domain.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,22 @@ namespace CommandExecutors
 	{
 		public string Command => "ADD";
 
-		public void Execute(CommandRDSS command)
+		public void Execute(CommandRDSS command, CPUResources resources)
 		{
-			throw new NotImplementedException();
+			int ans = 0;
+			try
+			{
+				ans = checked(resources.regs.ints[command.RegisterSource1] + resources.regs.ints[command.RegisterSource2]);
+			}
+			catch (OverflowException)
+			{
+				resources.regs.flags[Registers.Flags.Overflowing] = true;
+			}
+			resources.regs.flags[Registers.Flags.Zero] = ans == 0;
+			resources.regs.flags[Registers.Flags.Sign] = ans < 0;
+			resources.regs.flags[Registers.Flags.Carry] = resources.regs.flags[Registers.Flags.Overflowing];
+
+			resources.regs.ints[command.RegisterDestination] = ans;
 		}
 	}
 }

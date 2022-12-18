@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Domain.Resources;
 
 namespace CPUModel.Execution
 {
@@ -27,19 +28,17 @@ namespace CPUModel.Execution
 				next.AddSuccessor(executor);
 		}
 
-		public void Execute(T command)
+		public void Execute(T command, CPUResources resources)
 		{
-			concreteExecutors[command.Name].Execute(command);
-			//select impl executor
-			throw new NotImplementedException();
+			concreteExecutors[command.Name].Execute(command, resources);
 		}
 
-		public void Execute(Command command)
+		public void Execute(Command command, CPUResources resources)
 		{
 			if (command is T concreteCommand)
-				Execute(concreteCommand);
+				Execute(concreteCommand, resources);
 			else if (next != null)
-				next.Execute(command);
+				next.Execute(command, resources);
 			else
 				throw new CommandTypeNotFoundException($"Handler for type {command.GetType()} not found!");
 		}

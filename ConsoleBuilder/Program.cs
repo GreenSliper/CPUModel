@@ -7,6 +7,7 @@ using CPUModel.Parsing.CommandFactory;
 using CPUModel.Parsing.CommandFactory.Abstract;
 using Domain.Execution;
 using Domain.Execution.Commands;
+using Domain.Resources;
 
 Dictionary<Type, IEnumerable<string>> commandsTypes = new();
 
@@ -42,7 +43,13 @@ ICommandFactory ConfigureParsing()
 	return factory;
 }
 
+CPUResources ConfigureCPUResources()
+{
+	var regs = new Registers(8, 8);
+	return new CPUResources(regs);
+}
+
 ICommandExecutor commandExecutor = ConfigureExecution();
 
-CPU cpu = new CPU(commandExecutor);
+CPU cpu = new CPU(commandExecutor, ConfigureCPUResources());
 cpu.RunCode(new Parser(ConfigureParsing()), new FileASMSource("code.txt"));
