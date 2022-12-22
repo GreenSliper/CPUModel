@@ -5,6 +5,7 @@ using CPUModel.Execution;
 using CPUModel.Parsing;
 using CPUModel.Parsing.CommandFactory;
 using CPUModel.Parsing.CommandFactory.Abstract;
+using Domain.Exceptions;
 using Domain.Execution;
 using Domain.Execution.Commands;
 using Domain.Resources;
@@ -28,18 +29,43 @@ IEnumerable<IConcreteCommandExecutor<T>> CollectConcreteExecutors<T>() where T: 
 	return execs;
 }
 
+IEnumerable<IConcreteInterruptionHandler<T>> CollectInterruptionHandlers<T>() where T : InterruptionException
+{
+	var handlers = CommandAssembly.assembly //get assembly of executors
+		.GetTypes() //get all types
+		.Where(x =>
+		{
+			//type must implement IConcreteInterruptionHandler interface
+			var intrfc = x.GetInterface(typeof(IConcreteInterruptionHandler<>).Name);
+			//select types implementing this interface, which command generic type is that we're looking for
+			return intrfc != null && intrfc.GetGenericArguments().FirstOrDefault() == typeof(T);
+		})
+		//construct the class from type
+		.Select(x => (IConcreteInterruptionHandler<T>)Activator.CreateInstance(x)!);
+	return handlers;
+}
+
 
 ICommandExecutor ConfigureExecution()
 {
 	//build execution chain
 	ICommandExecutorChain executor = new CommandExecutorChain<CommandRDSS>(CollectConcreteExecutors<CommandRDSS>());
-	//executor.AddSuccessor(new CommandExecutorChain<CommandRDS>(CollectConcreteExecutors<CommandRDS>()));
+	executor.AddSuccessor(new CommandExecutorChain<EmptyCommand>(CollectConcreteExecutors<EmptyCommand>()));
 	return executor;
+}
+
+IEnumerable<IInterruptionHandler> ConfigureInterruptions()
+{
+	//concat all interruption handlers
+	return CollectInterruptionHandlers<DivisionByZeroInterruptionException>().Cast<IInterruptionHandler>()
+		.Concat(CollectInterruptionHandlers<KernelModeOperationOnlyInterruptionException>())
+		.Concat(CollectInterruptionHandlers<OperationNotFoundInterruptionException>());
 }
 
 ICommandFactory ConfigureParsing()
 {
-	ICommandFactory factory = new CommandRDSSFactory(commandsTypes[typeof(CommandRDSS)]);
+	ICommandFactoryChain factory = new CommandRDSSFactory(commandsTypes[typeof(CommandRDSS)]);
+	factory.AddSuccessor(new CommandRDSSFactory(commandsTypes[typeof(EmptyCommand)]));
 	return factory;
 }
 
@@ -51,5 +77,5 @@ CPUResources ConfigureCPUResources()
 
 ICommandExecutor commandExecutor = ConfigureExecution();
 
-CPU cpu = new CPU(commandExecutor, ConfigureCPUResources());
+CPU cpu = new CPU(commandExecutor, ConfigureCPUResources(), ConfigureInterruptions());
 cpu.RunCode(new Parser(ConfigureParsing()), new FileASMSource("code.txt"));
