@@ -3,8 +3,8 @@ using CommandExecutors;
 using CPUModel;
 using CPUModel.Execution;
 using CPUModel.Parsing;
-using CPUModel.Parsing.CommandFactory;
 using CPUModel.Parsing.CommandFactory.Abstract;
+using CPUModel.Parsing.CommandFactory.Implementations;
 using Domain.Exceptions;
 using Domain.Execution;
 using Domain.Execution.Commands;
@@ -51,6 +51,8 @@ ICommandExecutor ConfigureExecution()
 	//build execution chain
 	ICommandExecutorChain executor = new CommandExecutorChain<CommandRDSS>(CollectConcreteExecutors<CommandRDSS>());
 	executor.AddSuccessor(new CommandExecutorChain<EmptyCommand>(CollectConcreteExecutors<EmptyCommand>()));
+	executor.AddSuccessor(new CommandExecutorChain<CommandConstant>(CollectConcreteExecutors<CommandConstant>()));
+	executor.AddSuccessor(new CommandExecutorChain<CommandRDC>(CollectConcreteExecutors<CommandRDC>()));
 	return executor;
 }
 
@@ -66,6 +68,8 @@ ICommandFactory ConfigureParsing()
 {
 	ICommandFactoryChain factory = new CommandRDSSFactory(commandsTypes[typeof(CommandRDSS)]);
 	factory.AddSuccessor(new CommandRDSSFactory(commandsTypes[typeof(EmptyCommand)]));
+	factory.AddSuccessor(new CommandConstantFactory(commandsTypes[typeof(CommandConstant)]));
+	factory.AddSuccessor(new CommandRDCFactory(commandsTypes[typeof(CommandRDC)]));
 	return factory;
 }
 

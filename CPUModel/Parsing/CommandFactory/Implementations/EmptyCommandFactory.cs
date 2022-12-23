@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CPUModel.Parsing.CommandFactory
+namespace CPUModel.Parsing.CommandFactory.Implementations
 {
     internal class EmptyCommandFactory : AbstractCommandFactoryChain<EmptyCommand>
     {
@@ -17,9 +17,9 @@ namespace CPUModel.Parsing.CommandFactory
 
         protected override EmptyCommand ProduceCommand(string[] words)
         {
-            if(words.Length != 1)
-				throw new CommandParseException("No-argument command should only name, no arguments");
+            if (words.Length != 1)
+                throw new CommandParseException("No-argument command should only contain name, no arguments");
             return new EmptyCommand(words[0]);
-		}
+        }
     }
 }

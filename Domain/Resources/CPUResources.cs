@@ -12,7 +12,9 @@ namespace Domain.Resources
 	{
 		public Registers regs;
 
-		public CommandQueue commandQueue;
+		public CommandQueue commandQueue = null!;
+
+		public int programCounter = 0;
 
 		public CPUResources(Registers regs)
 		{

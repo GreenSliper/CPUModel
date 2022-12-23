@@ -47,6 +47,10 @@ namespace CPUModel
 					resources.commandQueue.Interruption = resources.regs.flags[Registers.Flags.Iterrupt] = true;
 					resources.commandQueue.SetInterruptionCommands(handler.GetInterruptionCommands());
 				}
+				catch (Exception e)
+				{
+					Console.WriteLine($"Unhandled exception occured: {e.Message}");
+				}
 			}
 		}
 	}

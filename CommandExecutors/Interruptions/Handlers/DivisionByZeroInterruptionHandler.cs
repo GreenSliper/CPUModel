@@ -17,6 +17,6 @@ namespace CommandExecutors.Interruptions.Handlers
             new EmptyCommand("IRET")
         };
 
-        public IEnumerable<Command> GetInterruptionCommands() => commands;
+        public IEnumerable<Command> GetInterruptionCommands() => commands.ToList();
     }
 }
