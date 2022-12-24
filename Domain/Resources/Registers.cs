@@ -67,7 +67,7 @@ namespace Domain.Resources
 				if(i < ints.Length)
 					Console.Write($"\t\t{ints[i]}");
 				else
-					Console.Write("\t\t\t");
+					Console.Write("\t\t");
 				if (i < floats.Length)
 					Console.Write($"\t{floats[i]}");
 				Console.WriteLine();

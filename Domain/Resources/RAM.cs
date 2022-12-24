@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Resources
 {
-	internal class RAM
+	public class RAM
 	{
 		int[] mem;
 		public RAM(int sizemem)
@@ -31,17 +31,14 @@ namespace Domain.Resources
 			return 0;
 		}
 
-		/// <returns>
-		/// (n2, n1) when n2 = mem[addr+1], n1 = mem[addr] 
-		/// </returns>
-		public (int, int) GetDoubleWordPare(int addr)
+		public (int, int) GetDoubleWordPaar(int addr)
 		{
 			int n1, n2;
 			if (addr < mem.Length)
 			{
 				n1 = mem[addr];
 				n2 = mem[addr + 1];
-				return (n2, n1);
+				return (n1, n2);
 			}
 
 			return (0, 0);

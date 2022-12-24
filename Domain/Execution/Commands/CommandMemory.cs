@@ -8,13 +8,14 @@ namespace Domain.Execution.Commands
 {
 	public class CommandMemory : Command
 	{
-		public CommandMemory(string name) : base(name)
+		public int Register { get; private set; }
+		public int MemoryAddress { get; private set; }
+		public CommandMemory(string name, int register, int memoryAddress) : base(name)
 		{
+			Register = register;
+			MemoryAddress = memoryAddress;
 		}
 
-		public override string GetStringRepresentation()
-		{
-			throw new NotImplementedException();
-		}
+		public override string GetStringRepresentation() => $"{Name} r{Register} m{MemoryAddress}";
 	}
 }

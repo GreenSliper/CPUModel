@@ -8,13 +8,14 @@ namespace Domain.Execution.Commands
 {
 	public class CommandPort : Command
 	{
-		public CommandPort(string name) : base(name)
+		public int Register {get; private set;}
+		public int PinIndex {get; private set;}
+		public CommandPort(string name, int register, int portIndex) : base(name)
 		{
+			Register = register;
+			PinIndex = portIndex;
 		}
 
-		public override string GetStringRepresentation()
-		{
-			throw new NotImplementedException();
-		}
+		public override string GetStringRepresentation() => $"{Name} r{Register} p{PinIndex}";
 	}
 }

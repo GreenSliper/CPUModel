@@ -1,5 +1,6 @@
 ﻿using CPUModel.Execution;
 using CPUModel.Parsing;
+using CPUModel.Parsing.ASMSource;
 using Domain.Exceptions;
 using Domain.Execution;
 using Domain.Resources;

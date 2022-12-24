@@ -1,4 +1,5 @@
-﻿using CPUModel.Parsing.CommandFactory.Abstract;
+﻿using CPUModel.Parsing.ASMSource;
+using CPUModel.Parsing.CommandFactory.Abstract;
 using Domain.Execution;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,18 @@ namespace CPUModel.Parsing
 		{
 			foreach (var lineWords in source)
 			{
-				yield return commandFactory.CreateCommand(lineWords);
+				Command command = null!;
+				try
+				{
+					command = commandFactory.CreateCommand(lineWords);
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine("Error occured while parsing source code!");
+					Console.WriteLine(e.Message);
+					yield break;
+				}
+				yield return command;
 			}
 		}
 	}

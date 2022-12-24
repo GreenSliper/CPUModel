@@ -5,18 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CPUModel.Parsing
+namespace CPUModel.Parsing.ASMSource
 {
-	public class FileASMSource : IASMSource
+	public class ConsoleASMSource : IASMSource
 	{
-		class FileASMEnumerator : IEnumerator<string[]>
+		class ConsoleASMEnumerator : IEnumerator<string[]>
 		{
-			StreamReader strr;
-			public FileASMEnumerator(string path)
+			int counter = 0;
+			public ConsoleASMEnumerator()
 			{
-				if(!File.Exists(path))
-					throw new FileNotFoundException();
-				strr = new StreamReader(path);
+				Console.WriteLine("Write ASM code in the console. To stop, write /stop");
 			}
 			public string[] Current { get; private set; } = null!;
 
@@ -24,13 +22,14 @@ namespace CPUModel.Parsing
 
 			public void Dispose()
 			{
-				strr.Dispose();
+				counter = 0;
 			}
 
 			public bool MoveNext()
 			{
 				var line = "";
-				if ((line = strr.ReadLine()) != null)
+				Console.Write($"[{counter++}] ");
+				if ((line = Console.ReadLine()) != "/stop")
 				{
 					Current = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 					return true;
@@ -40,19 +39,11 @@ namespace CPUModel.Parsing
 
 			public void Reset()
 			{
-				strr.BaseStream.Position = 0;
-				strr.DiscardBufferedData();
+				counter = 0;
 			}
 		}
+		public IEnumerator<string[]> GetEnumerator() => new ConsoleASMEnumerator();
 
-		string path;
-
-		public FileASMSource(string path)
-		{
-			this.path = path;
-		}
-
-		public IEnumerator<string[]> GetEnumerator() => new FileASMEnumerator(path);
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 }

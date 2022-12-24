@@ -2,6 +2,7 @@
 using CPUModel;
 using CPUModel.Execution;
 using CPUModel.Parsing;
+using CPUModel.Parsing.ASMSource;
 using CPUModel.Parsing.CommandFactory.Abstract;
 using CPUModel.Parsing.CommandFactory.Implementations;
 using Domain.Exceptions;
@@ -55,6 +56,8 @@ ICommandExecutor ConfigureExecution()
 	executor.AddSuccessor(new CommandExecutorChain<CommandConstant>(CollectConcreteExecutors<CommandConstant>()));
 	executor.AddSuccessor(new CommandExecutorChain<CommandRDC>(CollectConcreteExecutors<CommandRDC>()));
 	executor.AddSuccessor(new CommandExecutorChain<CommandRD>(CollectConcreteExecutors<CommandRD>()));
+	executor.AddSuccessor(new CommandExecutorChain<CommandMemory>(CollectConcreteExecutors<CommandMemory>()));
+	executor.AddSuccessor(new CommandExecutorChain<CommandPort>(CollectConcreteExecutors<CommandPort>()));
 	return executor;
 }
 
@@ -74,13 +77,17 @@ ICommandFactory ConfigureParsing()
 	factory.AddSuccessor(new CommandConstantFactory(commandsTypes[typeof(CommandConstant)]));
 	factory.AddSuccessor(new CommandRDCFactory(commandsTypes[typeof(CommandRDC)]));
 	factory.AddSuccessor(new CommandRDFactory(commandsTypes[typeof(CommandRD)]));
+	factory.AddSuccessor(new CommandMemoryFactory(commandsTypes[typeof(CommandMemory)]));
+	factory.AddSuccessor(new CommandPortFactory(commandsTypes[typeof(CommandPort)]));
 	return factory;
 }
 
 CPUResources ConfigureCPUResources()
 {
 	var regs = new Registers(8, 8);
-	return new CPUResources(regs);
+	var ram = new RAM(16);
+	var port = new USB();
+	return new CPUResources(regs, ram, port);
 }
 
 ICommandExecutor commandExecutor = ConfigureExecution();
@@ -88,9 +95,7 @@ ICommandExecutor commandExecutor = ConfigureExecution();
 CPU cpu = new CPU(commandExecutor, ConfigureCPUResources(), ConfigureInterruptions());
 IParser parser = new Parser(ConfigureParsing());
 
-Console.WriteLine("CPU started successfully!");
-
-IMenu menu = new Menu("Main menu", new IMenuItem[]
+IMenu menu = new Menu("Main menu [CPU started, waiting]", new IMenuItem[]
 	{
 		new Menu("Run code", new IMenuItem[]
 			{
@@ -103,7 +108,8 @@ IMenu menu = new Menu("Main menu", new IMenuItem[]
 						cpu.RunCode(parser, new FileASMSource(path));
 					else
 						Console.WriteLine("File does not exist!");
-				})
+				}),
+				new MenuItem("From console (JIT)", () => cpu.RunCode(parser, new ConsoleASMSource())),
 			}),
 		new MenuItem("Command list", () => 
 		{
