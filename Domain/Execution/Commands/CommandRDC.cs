@@ -16,5 +16,7 @@ namespace Domain.Execution.Commands
 			Constant = constant;
 			RegisterDestination = registerDestination;
 		}
+
+		public override string GetStringRepresentation() => $"{Name} r{RegisterDestination} {Constant}";
 	}
 }

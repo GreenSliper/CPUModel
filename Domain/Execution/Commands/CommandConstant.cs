@@ -13,5 +13,7 @@ namespace Domain.Execution.Commands
 		{
 			this.Constant = constant;
 		}
+
+		public override string GetStringRepresentation() => $"{Name} {Constant}";
 	}
 }

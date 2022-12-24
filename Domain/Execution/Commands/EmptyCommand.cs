@@ -11,5 +11,7 @@ namespace Domain.Execution.Commands
 		public CommandEmpty(string name) : base(name)
 		{
 		}
+
+		public override string GetStringRepresentation() => Name;
 	}
 }

@@ -10,6 +10,7 @@ namespace Domain.Execution
 	{
 		public string Name { get; private set; }
 
+		public abstract string GetStringRepresentation();
 		public Command(string name)
 		{
 			Name = name;

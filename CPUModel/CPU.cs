@@ -27,7 +27,7 @@ namespace CPUModel
 				this.interruptionHandlers.Add(handler.InterruptionType, handler);
 		}
 
-		public void RunCode(IParser parser, IASMSource source)
+		public void RunCode(IParser parser, IASMSource source, bool printStepwiseInfo = true)
 		{
 			var commands = parser.ParseASM(source);
 			resources.commandQueue = new(commands);
@@ -35,8 +35,15 @@ namespace CPUModel
 			{
 				try
 				{
+					if (printStepwiseInfo)
+						Console.WriteLine("Next command: " + command.GetStringRepresentation());
 					resources.programCounter++;
 					executor.Execute(command, resources);
+					if (printStepwiseInfo)
+					{
+						resources.regs.Print();
+						Console.ReadLine();
+					}
 				}
 				catch (InterruptionException e)
 				{
@@ -44,6 +51,12 @@ namespace CPUModel
 						throw new Exception("Cannot start interruption in another interruption! You may have forgot to call IRET");
 					if (!interruptionHandlers.TryGetValue(e.GetType(), out var handler))
 						throw new MissingMemberException($"Interruption handler for {e.GetType()} not found!", e);
+					if (printStepwiseInfo)
+					{
+						Console.WriteLine("Entered system interruption!");
+						resources.regs.Print();
+						Console.ReadLine();
+					}
 					resources.regs.Save();
 					resources.commandQueue.Interruption = resources.regs.flags[Registers.Flags.Iterrupt] = true;
 					resources.commandQueue.SetInterruptionCommands(handler.GetInterruptionCommands());

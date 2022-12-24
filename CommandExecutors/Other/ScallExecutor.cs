@@ -15,7 +15,7 @@ namespace CommandExecutors.Other
 
 		public void Execute(CommandEmpty command, CPUResources resources)
 		{
-			resources.regs.flags[Registers.Flags.SuperUser] = true;
+			resources.regs.flags[Registers.Flags.USuperUser] = true;
 		}
 	}
 }

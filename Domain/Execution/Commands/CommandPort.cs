@@ -11,5 +11,10 @@ namespace Domain.Execution.Commands
 		public CommandPort(string name) : base(name)
 		{
 		}
+
+		public override string GetStringRepresentation()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

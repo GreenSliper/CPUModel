@@ -18,5 +18,7 @@ namespace Domain.Execution.Commands
 			RegisterSource1 = registerSource1;
 			RegisterSource2 = registerSource2;
 		}
+
+		public override string GetStringRepresentation() => $"{Name} r{RegisterDestination} r{RegisterSource1} r{RegisterSource2}";
 	}
 }

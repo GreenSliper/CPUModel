@@ -17,7 +17,7 @@ namespace CPUModel.Parsing.CommandFactory.Implementations
 
 		protected override CommandRDS ProduceCommand(string[] words)
 		{
-			if (words.Length != 4)
+			if (words.Length != 3)
 				throw new CommandParseException("RDS command should have 2 arguments except command name");
 			if (int.TryParse(words[1], out int rd) && int.TryParse(words[2], out int rs1))
 				return new CommandRDS(words[0], rd, rs1);

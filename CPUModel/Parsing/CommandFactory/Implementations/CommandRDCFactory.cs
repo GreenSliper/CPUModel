@@ -19,7 +19,7 @@ namespace CPUModel.Parsing.CommandFactory.Implementations
 		{
 			if (words.Length != 3)
 				throw new CommandParseException("RDC command should have 2 arguments (except command name)");
-			if (int.TryParse(words[1], out var rd) && int.TryParse(words[1], out var constant))
+			if (int.TryParse(words[1], out var rd) && int.TryParse(words[2], out var constant))
 				return new CommandRDC(words[0], rd, constant);
 			throw new CommandParseException("Failed to convert arguments to integers!");
 		}

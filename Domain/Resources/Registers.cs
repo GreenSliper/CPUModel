@@ -10,13 +10,13 @@ namespace Domain.Resources
 	{
 		public enum Flags
 		{
-			Zero = 'Z',
-			Carry = 'C',
-			Sign = 'S',
-			Overflowing = 'O',
-			Iterrupt = 'I',
-			StepByStep = 'T',
-			SuperUser = 'U'
+			Zero = 0,
+			Carry,
+			Sign,
+			Overflowing,
+			Iterrupt,
+			TStepByStep,
+			USuperUser
 		}
 
 		public readonly int[] ints;
@@ -52,6 +52,26 @@ namespace Domain.Resources
 			foreach (var flag in flags.Keys)
 				flags[flag] = reserve.flags[flag];
 			reserve = null;
+		}
+
+		public void Print()
+		{
+			Console.WriteLine();
+			Console.Write("Flags: ");
+			foreach (var flag in flags.OrderBy(x=>(int)x.Key))
+				Console.Write($"{flag.Key.ToString()[0]}:{(flag.Value?1:0)}; ");
+			Console.WriteLine();
+			Console.WriteLine("Registers: \tint\tfloat");
+			for (int i = 0; i < Math.Max(ints.Length, floats.Length); i++)
+			{
+				if(i < ints.Length)
+					Console.Write($"\t\t{ints[i]}");
+				else
+					Console.Write("\t\t\t");
+				if (i < floats.Length)
+					Console.Write($"\t{floats[i]}");
+				Console.WriteLine();
+			}
 		}
 	}
 }
