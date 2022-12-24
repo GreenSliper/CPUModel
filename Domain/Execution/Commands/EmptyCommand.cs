@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Domain.Execution.Commands
 {
-	public class EmptyCommand : Command
+	public class CommandEmpty : Command
 	{
-		public EmptyCommand(string name) : base(name)
+		public CommandEmpty(string name) : base(name)
 		{
 		}
 	}

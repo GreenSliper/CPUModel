@@ -7,16 +7,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommandExecutors.Interruptions
+namespace CommandExecutors.Other
 {
-	internal class IretExecutor : IConcreteCommandExecutor<CommandEmpty>
+	internal class ScallExecutor : IConcreteCommandExecutor<CommandEmpty>
 	{
-		public string Command => "IRET";
+		public string Command => "SCALL";
 
 		public void Execute(CommandEmpty command, CPUResources resources)
 		{
-			resources.commandQueue.Interruption = false;
-			resources.regs.Restore();
+			resources.regs.flags[Registers.Flags.SuperUser] = true;
 		}
 	}
 }

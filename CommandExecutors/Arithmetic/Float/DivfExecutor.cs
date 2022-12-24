@@ -6,19 +6,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Domain.Exceptions;
 
-namespace CommandExecutors.Arithmetic
+namespace CommandExecutors.Arithmetic.Float
 {
-	internal class SubExecutor : IConcreteCommandExecutor<CommandRDSS>
+	internal class DivfExecutor : IConcreteCommandExecutor<CommandRDSS>
 	{
-		public string Command => "SUB";
+		public string Command => "DIVF";
 
 		public void Execute(CommandRDSS command, CPUResources resources)
 		{
-			int ans = 0;
+			float ans = 0;
+			if(resources.regs.floats[command.RegisterSource2] == 0)
+				throw new DivisionByZeroInterruptionException();
 			try
 			{
-				ans = checked(resources.regs.ints[command.RegisterSource1] - resources.regs.ints[command.RegisterSource2]);
+				ans = checked(resources.regs.floats[command.RegisterSource1] / resources.regs.floats[command.RegisterSource2]);
 			}
 			catch (OverflowException)
 			{
@@ -28,7 +31,7 @@ namespace CommandExecutors.Arithmetic
 			resources.regs.flags[Registers.Flags.Sign] = ans < 0;
 			resources.regs.flags[Registers.Flags.Carry] = resources.regs.flags[Registers.Flags.Overflowing];
 
-			resources.regs.ints[command.RegisterDestination] = ans;
+			resources.regs.floats[command.RegisterDestination] = ans;
 		}
 	}
 }

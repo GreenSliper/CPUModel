@@ -9,14 +9,13 @@ using System.Threading.Tasks;
 
 namespace CommandExecutors.Interruptions
 {
-	internal class IretExecutor : IConcreteCommandExecutor<CommandEmpty>
+	internal class StiExecutor : IConcreteCommandExecutor<CommandEmpty>
 	{
-		public string Command => "IRET";
+		public string Command => "STI";
 
 		public void Execute(CommandEmpty command, CPUResources resources)
 		{
-			resources.commandQueue.Interruption = false;
-			resources.regs.Restore();
+			resources.regs.flags[Registers.Flags.Iterrupt] = true;
 		}
 	}
 }

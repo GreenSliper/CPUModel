@@ -1,5 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-using CommandExecutors;
+﻿using CommandExecutors;
 using CPUModel;
 using CPUModel.Execution;
 using CPUModel.Parsing;
@@ -9,6 +8,7 @@ using Domain.Exceptions;
 using Domain.Execution;
 using Domain.Execution.Commands;
 using Domain.Resources;
+using SimpleConsoleMenu;
 
 Dictionary<Type, IEnumerable<string>> commandsTypes = new();
 
@@ -50,9 +50,11 @@ ICommandExecutor ConfigureExecution()
 {
 	//build execution chain
 	ICommandExecutorChain executor = new CommandExecutorChain<CommandRDSS>(CollectConcreteExecutors<CommandRDSS>());
-	executor.AddSuccessor(new CommandExecutorChain<EmptyCommand>(CollectConcreteExecutors<EmptyCommand>()));
+	executor.AddSuccessor(new CommandExecutorChain<CommandRDS>(CollectConcreteExecutors<CommandRDS>()));
+	executor.AddSuccessor(new CommandExecutorChain<CommandEmpty>(CollectConcreteExecutors<CommandEmpty>()));
 	executor.AddSuccessor(new CommandExecutorChain<CommandConstant>(CollectConcreteExecutors<CommandConstant>()));
 	executor.AddSuccessor(new CommandExecutorChain<CommandRDC>(CollectConcreteExecutors<CommandRDC>()));
+	executor.AddSuccessor(new CommandExecutorChain<CommandRD>(CollectConcreteExecutors<CommandRD>()));
 	return executor;
 }
 
@@ -67,9 +69,11 @@ IEnumerable<IInterruptionHandler> ConfigureInterruptions()
 ICommandFactory ConfigureParsing()
 {
 	ICommandFactoryChain factory = new CommandRDSSFactory(commandsTypes[typeof(CommandRDSS)]);
-	factory.AddSuccessor(new CommandRDSSFactory(commandsTypes[typeof(EmptyCommand)]));
+	factory.AddSuccessor(new CommandRDSFactory(commandsTypes[typeof(CommandRDS)]));
+	factory.AddSuccessor(new CommandEmptyFactory(commandsTypes[typeof(CommandEmpty)]));
 	factory.AddSuccessor(new CommandConstantFactory(commandsTypes[typeof(CommandConstant)]));
 	factory.AddSuccessor(new CommandRDCFactory(commandsTypes[typeof(CommandRDC)]));
+	factory.AddSuccessor(new CommandRDFactory(commandsTypes[typeof(CommandRD)]));
 	return factory;
 }
 
@@ -82,4 +86,34 @@ CPUResources ConfigureCPUResources()
 ICommandExecutor commandExecutor = ConfigureExecution();
 
 CPU cpu = new CPU(commandExecutor, ConfigureCPUResources(), ConfigureInterruptions());
-cpu.RunCode(new Parser(ConfigureParsing()), new FileASMSource("code.txt"));
+IParser parser = new Parser(ConfigureParsing());
+
+Console.WriteLine("CPU started successfully!");
+
+IMenu menu = new Menu("Main menu", new IMenuItem[]
+	{
+		new Menu("Run code", new IMenuItem[]
+			{
+				new MenuItem("From default file", () => cpu.RunCode(parser, new FileASMSource("code.txt"))),
+				new MenuItem("From file (set path)", () =>
+				{
+					Console.WriteLine("Enter file local/absolute path: ");
+					var path = Console.ReadLine();
+					if(File.Exists(path))
+						cpu.RunCode(parser, new FileASMSource(path));
+					else
+						Console.WriteLine("File does not exist!");
+				})
+			}),
+		new MenuItem("Command list", () => 
+		{
+			foreach(var type in commandsTypes)
+			{
+				Console.WriteLine(type.Key.Name + ":");
+				foreach(var command in type.Value.OrderBy(x=>x))
+					Console.WriteLine($"\t{command}");
+			}
+		})
+	});
+
+menu.Select(null!);

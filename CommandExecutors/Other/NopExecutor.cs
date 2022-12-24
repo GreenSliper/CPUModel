@@ -7,16 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommandExecutors.Interruptions
+namespace CommandExecutors.Other
 {
-	internal class IretExecutor : IConcreteCommandExecutor<CommandEmpty>
+	internal class NopExecutor : IConcreteCommandExecutor<CommandEmpty>
 	{
-		public string Command => "IRET";
+		public string Command => "NOP";
 
 		public void Execute(CommandEmpty command, CPUResources resources)
 		{
-			resources.commandQueue.Interruption = false;
-			resources.regs.Restore();
 		}
 	}
 }

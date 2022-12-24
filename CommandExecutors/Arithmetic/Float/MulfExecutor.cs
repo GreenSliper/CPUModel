@@ -7,18 +7,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommandExecutors.Arithmetic
+namespace CommandExecutors.Arithmetic.Float
 {
-    internal class AdduExecutor : IConcreteCommandExecutor<CommandRDSS>
+	internal class MulfExecutor : IConcreteCommandExecutor<CommandRDSS>
 	{
-		public string Command => "ADDU";
+		public string Command => "MULF";
 
 		public void Execute(CommandRDSS command, CPUResources resources)
 		{
-			uint ans = 0;
+			float ans = 0;
 			try
 			{
-				ans = checked((uint)resources.regs.ints[command.RegisterSource1] + (uint)resources.regs.ints[command.RegisterSource2]);
+				ans = checked(resources.regs.floats[command.RegisterSource1] * resources.regs.floats[command.RegisterSource2]);
 			}
 			catch (OverflowException)
 			{
@@ -28,7 +28,7 @@ namespace CommandExecutors.Arithmetic
 			resources.regs.flags[Registers.Flags.Sign] = ans < 0;
 			resources.regs.flags[Registers.Flags.Carry] = resources.regs.flags[Registers.Flags.Overflowing];
 
-			resources.regs.ints[command.RegisterDestination] = (int)ans;
+			resources.regs.floats[command.RegisterDestination] = ans;
 		}
 	}
 }

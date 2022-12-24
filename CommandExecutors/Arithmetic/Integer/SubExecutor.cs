@@ -1,5 +1,5 @@
-﻿using Domain.Execution;
-using Domain.Execution.Commands;
+﻿using Domain.Execution.Commands;
+using Domain.Execution;
 using Domain.Resources;
 using System;
 using System.Collections.Generic;
@@ -7,18 +7,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommandExecutors.Arithmetic
+namespace CommandExecutors.Arithmetic.Integer
 {
-    internal class AddExecutor : IConcreteCommandExecutor<CommandRDSS>
+    internal class SubExecutor : IConcreteCommandExecutor<CommandRDSS>
     {
-        public string Command => "ADD";
+        public string Command => "SUB";
 
         public void Execute(CommandRDSS command, CPUResources resources)
         {
             int ans = 0;
             try
             {
-                ans = checked(resources.regs.ints[command.RegisterSource1] + resources.regs.ints[command.RegisterSource2]);
+                ans = checked(resources.regs.ints[command.RegisterSource1] - resources.regs.ints[command.RegisterSource2]);
             }
             catch (OverflowException)
             {

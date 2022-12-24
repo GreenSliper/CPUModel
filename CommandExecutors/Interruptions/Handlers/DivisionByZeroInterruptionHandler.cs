@@ -13,8 +13,8 @@ namespace CommandExecutors.Interruptions.Handlers
     {
         List<Command> commands = new List<Command>()
         {
-            new EmptyCommand("CLI"),
-            new EmptyCommand("IRET")
+            new CommandEmpty("CLI"),
+            new CommandEmpty("IRET")
         };
 
         public IEnumerable<Command> GetInterruptionCommands() => commands.ToList();

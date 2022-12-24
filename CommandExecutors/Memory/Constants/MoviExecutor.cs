@@ -9,9 +9,9 @@ using Domain.Resources;
 
 namespace CommandExecutors.Memory.Constants
 {
-	internal class LiExecutor : IConcreteCommandExecutor<CommandRDC>
+	internal class MoviExecutor : IConcreteCommandExecutor<CommandRDC>
 	{
-		public string Command => "LI";
+		public string Command => "MOVI";
 
 		public void Execute(CommandRDC command, CPUResources resources)
 		{

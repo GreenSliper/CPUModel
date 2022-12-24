@@ -35,6 +35,7 @@ namespace CPUModel
 			{
 				try
 				{
+					resources.programCounter++;
 					executor.Execute(command, resources);
 				}
 				catch (InterruptionException e)

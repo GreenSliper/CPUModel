@@ -9,17 +9,17 @@ using System.Threading.Tasks;
 
 namespace CPUModel.Parsing.CommandFactory.Implementations
 {
-    internal class EmptyCommandFactory : AbstractCommandFactoryChain<EmptyCommand>
+    public class CommandEmptyFactory : AbstractCommandFactoryChain<CommandEmpty>
     {
-        public EmptyCommandFactory(IEnumerable<string> supportedCommands) : base(supportedCommands)
+        public CommandEmptyFactory(IEnumerable<string> supportedCommands) : base(supportedCommands)
         {
         }
 
-        protected override EmptyCommand ProduceCommand(string[] words)
+        protected override CommandEmpty ProduceCommand(string[] words)
         {
             if (words.Length != 1)
                 throw new CommandParseException("No-argument command should only contain name, no arguments");
-            return new EmptyCommand(words[0]);
+            return new CommandEmpty(words[0]);
         }
     }
 }

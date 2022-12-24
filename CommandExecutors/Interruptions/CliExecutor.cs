@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace CommandExecutors.Interruptions
 {
-	internal class CliExecutor : IConcreteCommandExecutor<EmptyCommand>
+	internal class CliExecutor : IConcreteCommandExecutor<CommandEmpty>
 	{
 		public string Command => "CLI";
 
-		public void Execute(EmptyCommand command, CPUResources resources)
+		public void Execute(CommandEmpty command, CPUResources resources)
 		{
 			resources.regs.flags[Registers.Flags.Iterrupt] = false;
 		}
